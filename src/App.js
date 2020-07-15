@@ -16,7 +16,7 @@ class BooksApp extends Component {
   };
 
   moveBook = (book, shelf) => {
-    const updateBooks = this.state.books.map((b) => {
+    const updatedBooks = this.state.books.map((b) => {
       if (b.id === book.id) {
         b.shelf = shelf;
       }
@@ -35,10 +35,17 @@ class BooksApp extends Component {
           exact
           path="/"
           render={() => (
-            <ListBooks bookshelves={this.bookshelves} books={books} />
+            <ListBooks
+              bookshelves={this.bookshelves}
+              books={books}
+              onMove={this.moveBook}
+            />
           )}
         />
-        <Route path="/search" render={() => <SearchBooks books={books} />} />
+        <Route
+          path="/search"
+          render={() => <SearchBooks books={books} onMove={this.moveBook} />}
+        />
       </div>
     );
   }
