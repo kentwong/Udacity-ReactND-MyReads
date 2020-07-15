@@ -111,10 +111,16 @@ const Book = (props) => {
 };
 
 class BookshelfChanger extends Component {
+  state = {
+    value: this.props.shelf,
+  };
+  handleChange = (e) => {
+    this.setState({ value: e.target.value });
+  };
   render() {
     return (
       <div className="book-shelf-changer">
-        <select value={this.props.shelf}>
+        <select value={this.state.value} onChange={this.handleChange}>
           <option value="move" disabled>
             Move to...
           </option>
