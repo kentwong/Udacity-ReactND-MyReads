@@ -15,6 +15,18 @@ class BooksApp extends Component {
     books: getAll,
   };
 
+  moveBook = (book, shelf) => {
+    const updateBooks = this.state.books.map((b) => {
+      if (b.id === book.id) {
+        b.shelf = shelf;
+      }
+      return b;
+    });
+    this.setState({
+      books: updatedBooks,
+    });
+  };
+
   render() {
     const { books } = this.state;
     return (
