@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Route, Link } from "react-router-dom";
-import getAll from "./data";
-// import * as BooksAPI from './BooksAPI'
+import * as BooksAPI from "./BooksAPI";
 import "./App.css";
 
 class BooksApp extends Component {
@@ -24,6 +23,12 @@ class BooksApp extends Component {
     });
     this.setState({
       books: updatedBooks,
+    });
+  };
+
+  componentDidMount = () => {
+    BooksAPI.getAll().then((books) => {
+      this.setState({ books: books });
     });
   };
 
@@ -53,13 +58,13 @@ class BooksApp extends Component {
 
 class ListBooks extends Component {
   render() {
-    const { bookshelves, books } = this.props;
+    const { bookshelves, books, onMove } = this.props;
     return (
       <div className="list-books">
         <div className="list-books-title">
           <h1>MyReads</h1>
         </div>
-        <Bookcase bookshelves={bookshelves} books={books} />
+        <Bookcase bookshelves={bookshelves} books={books} onMove={onMove} />
         <OpenSearchButton />
       </div>
     );
@@ -77,12 +82,17 @@ const OpenSearchButton = () => {
 };
 
 const Bookcase = (props) => {
-  const { bookshelves, books } = props;
+  const { bookshelves, books, onMove } = props;
   return (
     <div className="list-books-content">
       <div>
         {bookshelves.map((shelf) => (
-          <Bookshelf key={shelf.key} shelf={shelf} books={books} />
+          <Bookshelf
+            key={shelf.key}
+            shelf={shelf}
+            books={books}
+            onMove={onMove}
+          />
         ))}
       </div>
     </div>
@@ -90,7 +100,7 @@ const Bookcase = (props) => {
 };
 
 const Bookshelf = (props) => {
-  const { shelf, books } = props;
+  const { shelf, books, onMove } = props;
   const booksOnThisShelf = books.filter((book) => book.shelf === shelf.key);
   return (
     <div className="bookshelf">
@@ -98,7 +108,7 @@ const Bookshelf = (props) => {
       <div className="bookshelf-books">
         <ol className="books-grid">
           {booksOnThisShelf.map((book) => (
-            <Book key={book.id} book={book} shelf={shelf.key} />
+            <Book key={book.id} book={book} shelf={shelf.key} onMove={onMove} />
           ))}
         </ol>
       </div>
@@ -107,7 +117,7 @@ const Bookshelf = (props) => {
 };
 
 const Book = (props) => {
-  const { book, shelf } = props;
+  const { book, shelf, onMove } = props;
   return (
     <li>
       <div className="book">
@@ -120,7 +130,7 @@ const Book = (props) => {
               backgroundImage: `url("${book.imageLinks.thumbnail}")`,
             }}
           />
-          <BookshelfChanger book={book} shelf={shelf} />
+          <BookshelfChanger book={book} shelf={shelf} onMove={onMove} />
         </div>
         <div className="book-title">{book.title}</div>
         <div className="book-authors">{book.authors.join(", ")}</div>
@@ -135,6 +145,7 @@ class BookshelfChanger extends Component {
   };
   handleChange = (e) => {
     this.setState({ value: e.target.value });
+    this.props.onMove(this.props.book, e.target.value);
   };
   render() {
     return (
