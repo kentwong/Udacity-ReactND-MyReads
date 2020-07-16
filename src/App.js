@@ -11,10 +11,14 @@ class BooksApp extends Component {
   ];
 
   state = {
-    books: getAll,
+    books: [],
   };
 
   moveBook = (book, shelf) => {
+    BooksAPI.update(book, shelf).then((books) => {
+      console.log(books);
+    });
+
     const updatedBooks = this.state.books.map((b) => {
       if (b.id === book.id) {
         b.shelf = shelf;
