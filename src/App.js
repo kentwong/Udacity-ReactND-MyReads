@@ -196,10 +196,10 @@ class BookshelfChanger extends Component {
 
 class SearchBooks extends Component {
   render() {
-    const { books } = this.props;
+    const { books, onSearch, onResetSearch } = this.props;
     return (
       <div className="search-books">
-        <SearchBar />
+        <SearchBar onSearch={onSearch} onResetSearch={onResetSearch} />
         <SearchResults books={books} />
       </div>
     );
@@ -207,27 +207,48 @@ class SearchBooks extends Component {
 }
 
 const SearchBar = (props) => {
+  const { onSearch, onResetSearch } = props;
   return (
     <div className="search-books-bar">
-      <CloseSearchButton />
-      <SearchBooksInput />
+      <CloseSearchButton onResetSearch={onResetSearch} />
+      <SearchBooksInput onSearch={onSearch} />
     </div>
   );
 };
 
-const CloseSearchButton = () => {
+const CloseSearchButton = (props) => {
+  const { onResetSearch } = props;
   return (
     <Link to="/">
-      <button className="close-search">Close</button>
+      <button className="close-search" onClick={onResetSearch}>
+        Close
+      </button>
     </Link>
   );
 };
 
 class SearchBooksInput extends Component {
+  state = {
+    value: "",
+  };
+
+  handleChange = (e) => {
+    const val = e.target.value;
+    this.setState({ value: val }, () => {
+      this.props.onSearch(val);
+    });
+  };
+
   render() {
     return (
       <div className="search-books-input-wrapper">
-        <input type="text" placeholder="Search by title or author" />
+        <input
+          type="text"
+          placeholder="Search by title or author"
+          value={this.state.value}
+          onChange={this.handleChange}
+          autoFocus
+        />
       </div>
     );
   }
