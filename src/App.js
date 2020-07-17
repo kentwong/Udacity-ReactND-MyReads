@@ -12,6 +12,7 @@ class BooksApp extends Component {
 
   state = {
     books: [],
+    searchBooks: [],
   };
 
   moveBook = (book, shelf) => {
@@ -34,6 +35,24 @@ class BooksApp extends Component {
     BooksAPI.getAll().then((books) => {
       this.setState({ books: books });
     });
+  };
+
+  searchForBooks = (q) => {
+    if (q.length > 0) {
+      BooksAPI.search(q).then((books) => {
+        if (books.error) {
+          this.setState({ searchBooks: [] });
+        } else {
+          this.setState({ searchBooks: books });
+        }
+      });
+    } else {
+      this.setState({ searchBooks: [] });
+    }
+  };
+
+  resetSearch = () => {
+    this.setState({ searchBooks: [] });
   };
 
   render() {
