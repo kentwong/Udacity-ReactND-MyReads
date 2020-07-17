@@ -12,7 +12,7 @@ class BooksApp extends Component {
   ];
 
   state = {
-    books: [],
+    myBooks: [],
     searchBooks: [],
   };
 
@@ -21,7 +21,7 @@ class BooksApp extends Component {
       console.log(books);
     });
 
-    const updatedBooks = this.state.books.map((b) => {
+    const updatedBooks = this.state.myBooks.map((b) => {
       if (b.id === book.id) {
         b.shelf = shelf;
       }
@@ -34,7 +34,7 @@ class BooksApp extends Component {
 
   componentDidMount = () => {
     BooksAPI.getAll().then((books) => {
-      this.setState({ books: books });
+      this.setState({ myBooks: books });
     });
   };
 
@@ -57,7 +57,7 @@ class BooksApp extends Component {
   };
 
   render() {
-    const { books, searchBooks } = this.state;
+    const { myBooks, searchBooks } = this.state;
     return (
       <div className="app">
         <Route
@@ -66,7 +66,7 @@ class BooksApp extends Component {
           render={() => (
             <ListBooks
               bookshelves={this.bookshelves}
-              books={books}
+              books={myBooks}
               onMove={this.moveBook}
             />
           )}
@@ -75,10 +75,11 @@ class BooksApp extends Component {
           path="/search"
           render={() => (
             <SearchBooks
-              books={searchBooks}
+              searchBooks={searchBooks}
               onMove={this.moveBook}
               onSearch={this.searchForBooks}
               onResetSearch={this.resetSearch}
+              myBooks={myBooks}
             />
           )}
         />
@@ -201,11 +202,21 @@ class BookshelfChanger extends Component {
 
 class SearchBooks extends Component {
   render() {
-    const { books, onSearch, onResetSearch } = this.props;
+    const {
+      searchBooks,
+      onSearch,
+      onResetSearch,
+      myBooks,
+      onMove,
+    } = this.props;
     return (
       <div className="search-books">
         <SearchBar onSearch={onSearch} onResetSearch={onResetSearch} />
-        <SearchResults books={books} />
+        <SearchResults
+          searchBooks={searchBooks}
+          myBooks={myBooks}
+          onMove={onMove}
+        />
       </div>
     );
   }
@@ -260,12 +271,17 @@ class SearchBooksInput extends Component {
 }
 
 const SearchResults = (props) => {
-  const { books } = props;
+  const { searchBooks, myBooks, onMove } = props;
   return (
     <div className="search-books-results">
       <ol className="books-grid">
-        {books.map((book) => (
-          <Book key={book.id} book={book} shelf="none" />
+        {searchBooks.map((book) => (
+          <Book
+            key={book.id}
+            book={book}
+            shelf={book.shelf ? book.shelf : "none"}
+            onMove={onMove}
+          />
         ))}
       </ol>
     </div>
