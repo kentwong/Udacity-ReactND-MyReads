@@ -56,7 +56,7 @@ class BooksApp extends Component {
   };
 
   render() {
-    const { books } = this.state;
+    const { books, searchBooks } = this.state;
     return (
       <div className="app">
         <Route
@@ -72,7 +72,14 @@ class BooksApp extends Component {
         />
         <Route
           path="/search"
-          render={() => <SearchBooks books={books} onMove={this.moveBook} />}
+          render={() => (
+            <SearchBooks
+              books={searchBooks}
+              onMove={this.moveBook}
+              onSearch={this.searchForBooks}
+              onResetSearch={this.resetSearch}
+            />
+          )}
         />
       </div>
     );
