@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Route, Link } from "react-router-dom";
 import * as BooksAPI from "./BooksAPI";
+import { debounce } from "throttle-debounce";
 import "./App.css";
 
 class BooksApp extends Component {
@@ -37,7 +38,7 @@ class BooksApp extends Component {
     });
   };
 
-  searchForBooks = (q) => {
+  searchForBooks = debounce(300, false, (q) => {
     if (q.length > 0) {
       BooksAPI.search(q).then((books) => {
         if (books.error) {
@@ -49,7 +50,7 @@ class BooksApp extends Component {
     } else {
       this.setState({ searchBooks: [] });
     }
-  };
+  });
 
   resetSearch = () => {
     this.setState({ searchBooks: [] });
