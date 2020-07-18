@@ -17,18 +17,18 @@ class BooksApp extends Component {
   };
 
   moveBook = (book, shelf) => {
-    BooksAPI.update(book, shelf).then((books) => {
-      console.log(books);
-    });
+    BooksAPI.update(book, shelf);
 
-    const updatedBooks = this.state.myBooks.map((b) => {
-      if (b.id === book.id) {
-        b.shelf = shelf;
-      }
-      return b;
-    });
+    let updatedBooks = [];
+    updatedBooks = this.state.myBooks.filter((b) => b.id !== book.id);
+
+    if (shelf !== "none") {
+      book.shelf = shelf;
+      updatedBooks = updatedBooks.concat(book);
+    }
+
     this.setState({
-      books: updatedBooks,
+      myBooks: updatedBooks,
     });
   };
 
@@ -272,10 +272,20 @@ class SearchBooksInput extends Component {
 
 const SearchResults = (props) => {
   const { searchBooks, myBooks, onMove } = props;
+  const updatedBooks = searchBooks.map((book) => {
+    myBooks.map((b) => {
+      if (b.id === book.id) {
+        book.shelf = b.shelf;
+      }
+      return b;
+    });
+    return book;
+  });
+
   return (
     <div className="search-books-results">
       <ol className="books-grid">
-        {searchBooks.map((book) => (
+        {updatedBooks.map((book) => (
           <Book
             key={book.id}
             book={book}
