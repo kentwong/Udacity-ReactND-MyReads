@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { Route, Link } from "react-router-dom";
+import { Route } from "react-router-dom";
 import * as BooksAPI from "./BooksAPI";
 import { debounce } from "throttle-debounce";
-import ListBooks from "./ListBooks";
-import SearchBooks from "./SearchBooks";
+import ListBooks from "./Components/ListBooks";
+import SearchBooks from "./Components/SearchBooks";
 import "./App.css";
 
 const bookshelves = [
