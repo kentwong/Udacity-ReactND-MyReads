@@ -6,20 +6,24 @@ import ListBooks from "./ListBooks";
 import SearchBooks from "./SearchBooks";
 import "./App.css";
 
-class BooksApp extends Component {
-  bookshelves = [
-    { key: "currentlyReading", name: "Currently Reading" },
-    { key: "wantToRead", name: "Want to Read" },
-    { key: "read", name: "Have Read" },
-  ];
+const bookshelves = [
+  { key: "currentlyReading", name: "Currently Reading" },
+  { key: "wantToRead", name: "Want to Read" },
+  { key: "read", name: "Have Read" },
+];
 
+class BooksApp extends Component {
   state = {
     myBooks: [],
     searchBooks: [],
+    error: false,
   };
 
   moveBook = (book, shelf) => {
-    BooksAPI.update(book, shelf);
+    BooksAPI.update(book, shelf).catch((error) => {
+      console.log(error);
+      this.setState({ error: true });
+    });
 
     let updatedBooks = [];
     updatedBooks = this.state.myBooks.filter((b) => b.id !== book.id);
@@ -35,9 +39,14 @@ class BooksApp extends Component {
   };
 
   componentDidMount = () => {
-    BooksAPI.getAll().then((books) => {
-      this.setState({ myBooks: books });
-    });
+    BooksAPI.getAll()
+      .then((books) => {
+        this.setState({ myBooks: books });
+      })
+      .catch((error) => {
+        console.log(error);
+        this.setState({ error: true });
+      });
   };
 
   searchForBooks = debounce(300, false, (q) => {
@@ -59,7 +68,10 @@ class BooksApp extends Component {
   };
 
   render() {
-    const { myBooks, searchBooks } = this.state;
+    const { myBooks, searchBooks, error } = this.state;
+    if (error) {
+      return <div>Error occured. Try again later! </div>;
+    }
     return (
       <div className="app">
         <Route
@@ -67,7 +79,7 @@ class BooksApp extends Component {
           path="/"
           render={() => (
             <ListBooks
-              bookshelves={this.bookshelves}
+              bookshelves={bookshelves}
               books={myBooks}
               onMove={this.moveBook}
             />
